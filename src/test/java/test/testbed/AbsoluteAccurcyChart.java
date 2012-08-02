@@ -1,0 +1,1360 @@
+package test.testbed;
+
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Polygon;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.labels.StandardXYItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.DefaultDrawingSupplier;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.RefineryUtilities;
+
+public class AbsoluteAccurcyChart extends ApplicationFrame {
+
+	static List<Record> recoder = new LinkedList<Record>();
+
+	// Corresponding to column number
+	public static int numberOfRound = 0;
+
+	static int currentRound = 0;
+	// Number of lines
+	static final int division = 3;
+
+	static int numberOfCompletedNode = 0;
+
+	public static boolean executable = true;
+
+	public static final Object mutualLock = new Byte[0];
+	
+	private static final String title = "";//"Performance comparison";
+	
+	private static final double[] throughputIdeal = {
+		0.8109017336485422,
+		0.38771977935382196,
+		0.26832151300236406,
+		0.029550827423167853,
+		0.22813238770685582,
+		0.32034164696611506,
+		0.4444444444444445,
+		0.47755728920409773,
+		0.36526040189125303,
+		0.4598262017336486,
+		0.44327718676122935,
+		0.5130194641449961,
+		0.4515366430260047,
+		0.3735224586288416,
+		0.4893780141843972,
+		0.28015118203309697,
+		0.16312600472813238,
+		0.053191489361702135,
+		0.05200945626477542,
+		0.14539491725768322,
+		0.19858817966903072,
+		0.23877068557919623,
+		0.2624113475177305,
+		0.2517730496453901,
+		0.24113475177304966,
+		0.24823522458628844,
+		0.21276595744680854,
+		0.21750133963750987,
+		0.23996071710007882,
+		0.2234117021276596,
+		0.15130527974783295,
+		0.08747336485421593,
+		0.003546099290780142,
+		0.01654901497241923,
+		0.25650118203309696,
+		0.3593500394011032,
+		0.5094732466509063,
+		0.5484633569739953,
+		0.5733051615445234,
+		0.557938219070134,
+		0.5874704491725768,
+		0.5106382978723405,
+		0.5378250591016549,
+		0.508274231678487,
+		0.5047281323877069,
+		0.4811035066981876,
+		0.20805169470976062,
+		0.0921985815602837,
+		0.03782505910165485,
+		0.12056737588652483,
+		0.15957978723404256,
+		0.171400512214342,
+		0.22577584712371945,
+		0.1950419621749409,
+		0.2056806146572104,
+		0.2234117021276596,
+		0.1737646572104019,
+		0.19976359338061467,
+		0.20449172576832153,
+		0.19148936170212766,
+		0.09929078014184398,
+		0.06264984239558707,
+		0.005910362490149724,
+		0.043736682427107966,
+		0.2553276595744681,
+		0.3534278959810875,
+		0.4184536643026005,
+		0.4326385342789598,
+		0.4291066203388813,
+		0.4373522458628842,
+		0.4704648542159181,
+		0.38064003236672117,
+		0.4137253743104807,
+		0.40898345153664306,
+		0.4444592592592593,
+		0.3557919621749409,
+		0.15957446808510636,
+		0.05437533490937747,
+		0.027186761229314425,
+		0.07919621749408984,
+		0.07210642237982663,
+		0.08747336485421593,
+		0.09574787234042555,
+		0.12174940898345155,
+		0.11111481481481482,
+		0.11111111111111112,
+		0.11820330969267141,
+		0.11229314420803783,
+		0.06028569739952719,
+		0.07919621749408984,
+		0.04137253743104807,
+		0.029551812450748623
+	
+	};
+	
+	
+	private static final double[] throughputActual = {
+		0.8661725838901684,
+		0.3905186897367317,
+		0.39406614121820827,
+		0.3270402805456788,
+		0.17805976544685728,
+		0.38661798645926193,
+		0.4628624526823186,
+		0.419885978710609,
+		0.40712326071658755,
+		0.5019921605507442,
+		0.5528265981161022,
+		0.5032012844964308,
+		0.43498169680184445,
+		0.462670546082026,
+		0.4365590506070551,
+		0.2587944145743268,
+		0.09735846448121749,
+		0.11134791707004923,
+		-0.14120178044674633,
+		0.18160445589867627,
+		0.16778258528734147,
+		0.18169102544023863,
+		0.22022026652711413,
+		-0.06771248595779537,
+		0.2513095453652079,
+		0.21479673811455,
+		0.17012443597400956,
+		0.27090574385488897,
+		0.2484484146928471,
+		0.2763742437186364,
+		0.20938530956105356,
+		0.10118926003006858,
+		0.0023414774743139594,
+		-0.01674820517518212,
+		0.17893577138985456,
+		0.323409585968453,
+		0.4891969605649392,
+		0.6318444785734744,
+		0.4610058504909082,
+		0.2999834083900511,
+		0.5301927989208113,
+		0.42128057850229594,
+		0.571869703702014,
+		0.5367290418645383,
+		0.4087811192492035,
+		0.48002402267460814,
+		0.22789134983873913,
+		0.14406746704884935,
+		0.13513960796129224,
+		0.08451430291820483,
+		0.16746957989472094,
+		0.2672547307400551,
+		0.16531791681911784,
+		0.1957325761565771,
+		0.17345955180532696,
+		0.16189224433818628,
+		0.08577752281588485,
+		0.14824830527837737,
+		0.18417434314943323,
+		0.15264769421475,
+		0.06411481632026626,
+		0.13451371457048003,
+		0.016515370801789934,
+		-0.07006127819908992,
+		0.2950055913166713,
+		0.3108909792119997,
+		0.5385180827785084,
+		0.5144155095300735,
+		0.4413777670167412,
+		0.3681938051002054,
+		0.534899043991593,
+		0.48658059480299076,
+		0.5226536059801515,
+		0.47265586434120105,
+		0.43052877935426986,
+		0.3689415723881798,
+		0.35165892220409883,
+		-0.03556559990617345,
+		0.1693845141802637,
+		-0.04611592523455778,
+		0.08047617814933537,
+		0.06349050103899423,
+		0.07425603983185164,
+		0.10891905601298027,
+		0.14393199894851202,
+		0.2247075931591764,
+		0.06991437840354499,
+		0.060542727531544355,
+		-0.03942254188672284,
+		-0.012921069919589601,
+		0.09006907184877908,
+		0.05675843408056176
+	
+	};
+	
+	private static final double[] tThroughputActual = {
+		0.7349644171536542,
+		0.5156692588208944,
+		0.42682541330006046,
+		0.11968217484058247,
+		0.48437982491526593,
+		0.5374720108870437,
+		0.7543127611291893,
+		0.6591827979809646,
+		0.6276101926887325,
+		0.5624200130340018,
+		0.7223806262786674,
+		0.4733259347213949,
+		0.3742940630576031,
+		0.5446933556713272,
+		0.432455131808322,
+		0.14765278507552432,
+		0.07073440741810205,
+		0.045149124097849436,
+		0.06881109351414888,
+		0.21827440213334565,
+		0.20183993673631279,
+		0.15936573297077344,
+		0.29406979793249205,
+		0.15942082884731584,
+		0.26011271389374097,
+		0.20306690910740527,
+		0.22656330743051828,
+		0.38813213081284764,
+		0.47799447212977514,
+		0.39964280239460354,
+		0.2750577871453576,
+		0.09162789995276516,
+		0.018614901401986073,
+		-0.001694427902365958,
+		0.2661379644082688,
+		0.30024654860981376,
+		0.5131360049978579,
+		0.5227312128524109,
+		0.5637111863168698,
+		0.317429870598914,
+		0.6097633926160582,
+		0.6471477134055927,
+		0.5191308888104473,
+		0.566488330399229,
+		0.5967442302040258,
+		0.3845539116909323,
+		0.20325626810688274,
+		0.12111468968666766,
+		0.07056045621466883,
+		0.08612765818113638,
+		0.2524896133587427,
+		0.3097747545594323,
+		0.2301015910469058,
+		0.1857080812761263,
+		0.2510604435938027,
+		0.17635428731090258,
+		0.07440310956060903,
+		0.23007228112598116,
+		0.13450245962966073,
+		0.12952568589826846,
+		0.11394612251483233,
+		0.14266231263173673,
+		0.05241134828926525,
+		0.07147356174116631,
+		0.19576592058747228,
+		0.37855670520930834,
+		0.4973729411529551,
+		0.6242350505870651,
+		0.4002777531917941,
+		0.2882138688960016,
+		0.6538298293496794,
+		0.5132329550830312,
+		0.5778212472868396,
+		0.6717429870805254,
+		0.5355601455226324,
+		0.43970322769192643,
+		0.39271890683788696,
+		0.0709663235872508,
+		0.004057461450449051,
+		0.012985339848479716,
+		0.16504385376312775,
+		0.14379744776015263,
+		0.16863253634363967,
+		0.08780548434447982,
+		0.10839047389581208,
+		0.14355734324111896,
+		0.07609788778864307,
+		0.12410573249862838,
+		0.05700195616616627,
+		0.13475742620465453,
+		0.048312216702435296,
+		0.05395744133121305
+	};
+	
+	
+	private static final double[] responseIdeal = {
+		0.2175441613766733,
+		0.1127514461582923,
+		0.0507307261527014,
+		0.02860522877120885,
+		0.028878130040841256,
+		0.03784458530250563,
+		0.05745076658182447,
+		0.057641469063467184,
+		0.0954940311691032,
+		0.06743653210334132,
+		0.12180681542364474,
+		0.08458535389335926,
+		0.059207926459147193,
+		0.06571888943757093,
+		0.19262904947102247,
+		0.05498426533612563,
+		0.03207970790421974,
+		0.030900710092355246,
+		0.029281145973414555,
+		0.02847048998553986,
+		0.03621599258637552,
+		0.030682176074728954,
+		0.033926014031347485,
+		0.0322951945661982,
+		0.03466592266663379,
+		0.06699958628479458,
+		0.031089898113328858,
+		0.0457444296364979,
+		0.036290549441931566,
+		0.03489467942402017,
+		0.03560577675979774,
+		0.03037234715089744,
+		0.03972948440445672,
+		0.027567397341867937,
+		0.02803818780880685,
+		0.03218685672616694,
+		0.05277950728971232,
+		0.1605325595209637,
+		0.0743450410667195,
+		0.06411549965029129,
+		0.07573611398975454,
+		0.052920093644560594,
+		0.18438971380429545,
+		0.11059579728403364,
+		0.08601187473443908,
+		0.058862110800705976,
+		0.03679492021549115,
+		0.04183965848454694,
+		0.03334438869659762,
+		0.031271666996225064,
+		0.03039620870309231,
+		0.03937720326195418,
+		0.032627504768955484,
+		0.030992437617675794,
+		0.04279563508920129,
+		0.033032829058883134,
+		0.03069479115796222,
+		0.033281419310918554,
+		0.04432248838185055,
+		0.03492971424271904,
+		0.03371600802351007,
+		0.037373558105540175,
+		0.029513331271882142,
+		0.03144611699966653,
+		0.0306642250661382,
+		0.03390198716978476,
+		0.10491918722468299,
+		0.08415765490358551,
+		0.1399209586522955,
+		0.06738672779489499,
+		0.08263903880970068,
+		0.09334842475865236,
+		0.07725357702156373,
+		0.052261823828488325,
+		0.2090628263684371,
+		0.08026977461308578,
+		0.032414214260144084,
+		0.036151363138216853,
+		0.03306677583973418,
+		0.030411268446055382,
+		0.037682532046381695,
+		0.0333635631581828,
+		0.03160140646633156,
+		0.031794608184981345,
+		0.03538218519910585,
+		0.08381817406217537,
+		0.07060975731399544,
+		0.03602538209907883,
+		0.041621364614192774,
+		0.03134309004189552,
+		0.03762138931360803,
+		0.03269169002423869
+	};
+	
+	private static final double[] responseActual = {
+		0.18505203891578767,
+		0.0897394116231915,
+		0.04259686811135721,
+		0.03116192054425887,
+		0.02637874414583652,
+		0.013194531355922622,
+		0.036385964364948745,
+		0.06092068717354927,
+		0.060180108592005246,
+		0.06515125916986422,
+		0.08609000972037917,
+		0.06242340481199658,
+		0.05311333240698923,
+		0.0727171510753167,
+		0.13609905466221522,
+		0.051128718549570226,
+		0.032040517173182986,
+		0.03146068777409325,
+		0.024241155204074827,
+		0.02873429692248604,
+		0.029888862944697808,
+		0.029878410469483252,
+		0.04124623285120663,
+		0.015511538077475297,
+		0.035750377514977894,
+		0.028121835115818145,
+		0.036383531164894886,
+		0.03386589646980566,
+		0.027693233464798045,
+		0.03495574217975929,
+		0.025814625281438547,
+		0.031505030156652875,
+		0.03552310934391681,
+		0.04350663408400178,
+		0.028560312619014067,
+		0.031771173327147614,
+		0.05054132187163077,
+		0.13381590036512597,
+		0.07500615104269696,
+		0.058059258510213,
+		0.07640282636097694,
+		0.05831989781476647,
+		0.23572733069041543,
+		0.10095678283008455,
+		0.0746844092066468,
+		0.07198878089342296,
+		0.03735189497317937,
+		0.031089411493862185,
+		0.03361265381310026,
+		0.014345656332395014,
+		0.030004576860020643,
+		0.02983480142674906,
+		0.029039818292881187,
+		0.03684484872081814,
+		0.035216082734760304,
+		0.03861674103291028,
+		0.03251210301491024,
+		0.005802819581535711,
+		0.02950805070532536,
+		0.032600874572081814,
+		0.030568008367649266,
+		0.025280458693998503,
+		0.04339686774121375,
+		0.02325870411379659,
+		0.02528322205176327,
+		0.037283596467184155,
+		0.07538582837046877,
+		0.06906490257951231,
+		0.08456894475989819,
+		0.05530704454974364,
+		0.07239085080029192,
+		0.0885312872353915,
+		0.058227082848222034,
+		0.05590924917206186,
+		0.23262049500844728,
+		0.06164061370609439,
+		0.03630206976163089,
+		0.03553400398677975,
+		0.046188173681638814,
+		0.030412379595632616,
+		0.03120423479267824,
+		0.029582371965682183,
+		0.041362111233636104,
+		0.032176486536759044,
+		0.04301788063887424,
+		0.0380520638605579,
+		0.024733606091861357,
+		0.030568347766567028,
+		0.0262912978798701,
+		0.027480184438801583,
+		0.02865553953413487,
+		0.03427222666628438
+	};
+	
+	private static final double[] tResponseActual = {
+		0.2234959127710608,
+		0.13204640730106904,
+		0.10214321998489093,
+		0.03695052582541067,
+		0.12140132140635085,
+		0.1397536177876564,
+		0.23552660517815138,
+		0.1864590939975339,
+		0.17370444473640154,
+		0.14929918691893623,
+		0.21702556176071008,
+		0.11898098686909885,
+		0.0863915337079703,
+		0.14371330756681677,
+		0.1058942940042449,
+		0.04282341710561487,
+		0.028530825117303704,
+		0.025543345073091278,
+		0.028265819264474357,
+		0.050477176378821514,
+		0.04918278358373934,
+		0.04497211346297447,
+		0.06388761399465293,
+		0.04528252564669115,
+		0.05669971806695197,
+		0.04985240739584537,
+		0.05205238859546665,
+		0.09244418844778741,
+		0.12198362183314537,
+		0.09604771115567717,
+		0.05933070165219459,
+		0.03243123808562082,
+		0.025138343573107957,
+		0.027654577006832298,
+		0.0575977616667224,
+		0.06571418191725825,
+		0.13454103590727845,
+		0.13773280721411946,
+		0.15113710324038862,
+		0.06972795329640724,
+		0.16836478105774488,
+		0.18337106845757095,
+		0.13644551112202968,
+		0.1530186239150082,
+		0.1621942979899833,
+		0.08836127156605049,
+		0.047520158654202324,
+		0.037350497894236556,
+		0.028295269682746788,
+		0.030751011486338214,
+		0.05223934378952416,
+		0.06507603019282417,
+		0.04940719488665371,
+		0.04586845478314622,
+		0.05228687409186722,
+		0.04516546337672986,
+		0.028794305920487956,
+		0.049697282311864766,
+		0.03968002846269668,
+		0.03883300366726031,
+		0.03595192352361121,
+		0.04113022962786769,
+		0.026161941112947923,
+		0.028516852643997087,
+		0.04776733945300257,
+		0.08786780203085906,
+		0.1273280010588209,
+		0.1731583362698495,
+		0.09533236493068639,
+		0.061654950918143867,
+		0.18562730948051115,
+		0.13370076575630604,
+		0.15656402154852642,
+		0.1936179246981564,
+		0.14137876142609757,
+		0.10981118037969102,
+		0.09442222939936393,
+		0.028756604951105408,
+		0.026456215907699476,
+		0.025446883302478046,
+		0.04620078839656157,
+		0.04325876293486755,
+		0.04704712353201798,
+		0.03194969456191182,
+		0.03620952182240386,
+		0.043310069654431224,
+		0.029712921407480525,
+		0.039478551083990884,
+		0.026748992496466478,
+		0.04159854761263858,
+		0.02576661528446106,
+		0.026380113805846067
+	};
+	
+	
+	private static final double[] avIdeal = {
+		0.9635695376569546,
+		0.9637164366960671,
+		0.9638621558071107,
+		0.9640066803601252,
+		0.964150082096312,
+		0.9642923740413494,
+		0.9644335127991932,
+		0.9645735402133617,
+		0.9647124693586608,
+		0.9648503131055998,
+		0.9649870841243658,
+		0.9651227948887069,
+		0.9652574576797232,
+		0.9653910845895729,
+		0.9655236611113792,
+		0.9656552519988644,
+		0.9657858681949992,
+		0.9659154430310715,
+		0.9660440401253805,
+		0.9661716959331613,
+		0.9662983955040562,
+		0.9664241495423611,
+		0.9665489685931983,
+		0.9666728383632661,
+		0.9667958186343342,
+		0.9669179189459608,
+		0.967039076273775,
+		0.9671593733716523,
+		0.9672787955688218,
+		0.9673973523752115,
+		0.9675150531634202,
+		0.9676318838890939,
+		0.9677479003883153,
+		0.9678630881858284,
+		0.9679774561291149,
+		0.9680910129401579,
+		0.96820376721766,
+		0.9683157274392137,
+		0.9684269019634257,
+		0.9685372990319976,
+		0.9686469267717621,
+		0.9687557931966781,
+		0.9688639062097826,
+		0.9689712950002414,
+		0.9690779030695335,
+		0.9691838021846629,
+		0.9692889784285784,
+		0.9693934391776221,
+		0.9694972123841318,
+		0.9696002431980544,
+		0.9697026007287535,
+		0.969804271286479,
+		0.9699052617640331,
+		0.970005578962313,
+		0.9701052097318836,
+		0.9702042005455942,
+		0.9703025575437443,
+		0.9704002283786823,
+		0.9704972782100109,
+		0.9705937129358256,
+		0.9706894620148454,
+		0.9707846464877302,
+		0.9708791770584863,
+		0.97097311659067,
+		0.9710664520011728,
+		0.9711591706146557,
+		0.9712513152523272,
+		0.9713428729725082,
+		0.9714338493649745,
+		0.9715243760832601,
+		0.971614080173192,
+		0.9717033454191489,
+		0.9717920509999718,
+		0.9718802021626,
+		0.9719678215508896,
+		0.9720548792491333,
+		0.9721413978827462,
+		0.9722273824431387,
+		0.9723128378602869,
+		0.972397769003676,
+		0.9724821806832247,
+		0.9725660776501931,
+		0.9726494645980748,
+		0.972732362686238,
+		0.9728147269269526,
+		0.9728966114138995,
+		0.9729780203217296,
+		0.9730589093887306,
+		0.9731393476920432,
+		0.973219275218367,
+		0.97329874432895,
+		0.9733777432017109,
+		0.973456275998103,
+		0.9735343468306205,
+		0.9736119597635162,
+		0.9736891188135078,
+		0.9737658279504698,
+		0.9738421063033549,
+		0.9739179272518826,
+		0.9739933099234594,
+		0.9740682581072709,
+		0.9741427755489489
+	};
+	
+	private static final double[] avActual = {
+		0.9336761414250246,
+		0.9788161666055677,
+		0.9661831265741492,
+		0.9627863028360921,
+		0.9639857027655697,
+		0.9347005559306344,
+		0.9735372736868017,
+		0.9598853891859136,
+		0.9740424242043229,
+		0.9736425998355349,
+		0.9835097676220768,
+		0.9808232798133991,
+		0.9995297000695554,
+		0.9620212321380931,
+		0.99167508020767,
+		0.9602537804378428,
+		0.9856603867616639,
+		0.9786106803102269,
+		0.971492831037681,
+		0.9299543998036177,
+		0.9602184004391954,
+		0.9602030695084302,
+		1.0161809299508926,
+		0.9970069248085288,
+		0.9293477359540349,
+		0.9405518164392935,
+		0.9683342479143752,
+		0.945732748103432,
+		0.9754702106450905,
+		0.9594841887190966,
+		0.9500847211134431,
+		0.9505855501453508,
+		0.9549017887981511,
+		0.9616765900920436,
+		0.9724607259081806,
+		0.9681173355487233,
+		0.9577778343968628,
+		0.964401952391882,
+		1.0020426677209968,
+		0.9699912652149741,
+		0.9739428837935414,
+		0.9776907468295938,
+		0.998941474176147,
+		0.950873903260561,
+		0.976974595330004,
+		0.9782518145354818,
+		0.9583275773822472,
+		0.9404266838462966,
+		0.9592714091517183,
+		0.9407370425719702,
+		0.9638854036319761,
+		0.9676019717334338,
+		0.9482338210568922,
+		0.9896224422669664,
+		0.9643750027332191,
+		0.9117301185173439,
+		0.9206705404235777,
+		0.9601428867010867,
+		0.9527592984024287,
+		0.9658245142666576,
+		0.9483998577077639,
+		0.9197328278376796,
+		0.9543738466893594,
+		0.9942418989864349,
+		0.9739250193474219,
+		0.9581255462433766,
+		0.9768241443645174,
+		0.9711277103954021,
+		0.9942946861126292,
+		0.9482833197102511,
+		0.9705430724756362,
+		0.9767409749491355,
+		0.9234772011440943,
+		0.9922533903978533,
+		0.9675733073722076,
+		0.9998110659770194,
+		0.960683937375832,
+		0.9869489611603195,
+		0.9579162866884365,
+		0.9471144026958194,
+		0.9665713560326479,
+		0.9600043737766584,
+		0.9545056396895384,
+		0.9763007941700159,
+		0.9597478878375595,
+		0.9624023911813997,
+		0.9477069596817805,
+		0.959389348827935,
+		0.9238014320853111,
+		0.9496432767574066,
+		0.9530495192534708,
+		0.9046237937298764,
+		0.9518931053149625,
+		0.9252508798858139,
+		0.9407948946036226,
+		0.9335195800995645,
+		0.9229198080873371,
+		0.9334947962360465,
+		0.9921981898047256,
+		0.8961579475248346,
+		0.9242172810513017,
+		0.897978398419956
+	};
+	
+	private static final double[] tAvActual = {
+		0.9454530084290527,
+		0.9459002678173756,
+		0.9493600854469058,
+		0.9502254683914947,
+		0.9507377614569634,
+		0.9489395651471275,
+		0.9455190216493546,
+		0.9449857749897116,
+		0.9450091014557873,
+		0.9440133989961718,
+		0.9430326801976264,
+		0.9428529229985638,
+		0.9422895768925377,
+		0.941955084776158,
+		0.9422416677305812,
+		0.940843265761005,
+		0.9406310863507508,
+		0.9428870155621832,
+		0.9439665455165569,
+		0.9442542046885963,
+		0.9450645919368564,
+		0.9438890413308251,
+		0.9433301051115154,
+		0.9402578678334574,
+		0.9401797443663363,
+		0.9406124763056469,
+		0.9384665716162236,
+		0.9391442907316796,
+		0.9375110316061015,
+		0.9378892502730506,
+		0.9372761062543669,
+		0.937641249486399,
+		0.9379079551023823,
+		0.9380438126544596,
+		0.9387076914333772,
+		0.9411333181413845,
+		0.9427305845313603,
+		0.9425559026146981,
+		0.9430918709279309,
+		0.9383431941273774,
+		0.9377313175580373,
+		0.9358893613785895,
+		0.9361302704382103,
+		0.9387503034072205,
+		0.940007918839024,
+		0.9377814993345723,
+		0.9368533748337589,
+		0.936292292974368,
+		0.9360600499500478,
+		0.9417944012007594,
+		0.945986774093501,
+		0.9471298178861832,
+		0.9480198280674182,
+		0.9501617993690538,
+		0.9500775999124308,
+		0.9485996329936628,
+		0.9489660900349601,
+		0.9485059328655245,
+		0.9477778093730147,
+		0.9483610967126161,
+		0.9486810303046282,
+		0.9475855906882543,
+		0.9483523853638267,
+		0.9499176009532364,
+		0.9473023975243509,
+		0.9483888318282458,
+		0.9482979036429512,
+		0.9484093702789917,
+		0.9477483554045403,
+		0.9493759486577067,
+		0.9497474091735773,
+		0.9466640758304363,
+		0.9440249765433966,
+		0.9419229950923684,
+		0.9412140656480069,
+		0.9404007522726227,
+		0.9406739272384173,
+		0.9410168690376799,
+		0.9387079266698619,
+		0.9384023815744877,
+		0.9376613590301318,
+		0.9374907711918521,
+		0.9383763407727023,
+		0.9363312443093557,
+		0.9362288558309106,
+		0.9400342111597697,
+		0.9410755589143112,
+		0.9407800217515292,
+		0.9415939806956354,
+		0.9418036070778101,
+		0.9382563281118917,
+		0.9371787797480536,
+		0.9363565377256711,
+		0.9380836275450021,
+		0.9378180895537508,
+		0.9366715291273103,
+		0.938566694876126,
+		0.937651655374706,
+		0.93890111671811,
+		0.9373707211929416,
+		0.9391037618482039,
+		0.9384826874420877
+	};
+	
+	private static double maxOfThroughput = 28.199060031332287;
+	private static double maxOfResponse = 0.1761915641476274;
+	private static double maxOfAv = 1.0;
+	
+	
+	
+	/**
+	 * Max of edu.rice.rubis.servlets.SearchItemsByCategory's Availability.rtf=1.0
+Max of edu.rice.rubis.servlets.SearchItemsByCategory's Response Time.rtf=0.1761915641476274
+Max of edu.rice.rubis.servlets.SearchItemsByCategory's Throughput.rtf=28.199060031332287
+
+Response Time:
+ANN RS: 0.9985645386741089
+C-ANN RS: 0.3714537926747894
+C-ANN Prediction SMAPE: 0.22469944319111795
+
+Throughput:
+ANN RS: 0.9971797871891245
+C-ANN RS: 0.8575766498723708
+C-ANN Prediction SMAPE: 0.19390974258736157
+
+
+Availability:
+ANN RS: 0.9000020426125601
+C-ANN RS: 0.7200012247657853
+C-ANN Prediction SMAPE: 0.014216946482356234
+
+	 */
+
+	
+	
+	/**
+	 * Creates a new demo.
+	 * 
+	 * @param title
+	 *            the frame title.
+	 */
+	public AbsoluteAccurcyChart(final String title) {
+		super(title);
+		final XYDataset dataset = createDataset();
+		final JFreeChart chart = createChart(dataset);
+		final ChartPanel chartPanel = new ChartPanel(chart);
+		chartPanel.setPreferredSize(new Dimension(900, 570));
+		setContentPane(chartPanel);
+	}
+
+	/**
+	 * Creates a sample dataset.
+	 * 
+	 * @return The dataset.
+	 */
+	private XYDataset createDataset() {
+
+
+		// create the dataset...
+		XYSeries series1 = new XYSeries("Measured");
+		XYSeries series2 = new XYSeries("ANN Predicated");
+		XYSeries series3 = new XYSeries("Conversional ANN Predicated");
+		
+		XYSeriesCollection xyDataset = new XYSeriesCollection();
+		xyDataset.addSeries(series1);
+		xyDataset.addSeries(series2);
+		//xyDataset.addSeries(series3);
+		//createThroughputData(series1, series2, series3);
+		//createResponsetData(series1, series2,series3);
+		createAvailabilityData(series1, series2,series3);
+		return xyDataset;
+
+	}
+	
+	private void createThroughputData (XYSeries series1, XYSeries series2,
+			 XYSeries series3){
+		int i = 1;
+		for (double d : throughputIdeal) {
+			series1.add(i, maxOfThroughput*d);
+			i++;
+		}
+		i=1;
+		for (double d : throughputActual) {
+			series2.add(i, maxOfThroughput*d);;
+			i++;
+		}
+		i=1;
+		for (double d : tThroughputActual) {
+			series3.add(i, maxOfThroughput*d);;
+			i++;
+		}
+		
+		
+		double MAPE = 0.0;
+		double total = 0.0;
+		List<Double> ampes = new ArrayList<Double>();
+		for (int j = 0; j < throughputIdeal.length; j++) {
+			MAPE = 0.0;
+			  if ((throughputActual[j] > 0 && throughputIdeal[j] < 0) ||
+					   (throughputActual[j] < 0 && throughputIdeal[j] > 0)) {
+				   MAPE = Math.abs((throughputIdeal[j] + throughputActual[j]) / 
+						   (throughputIdeal[j] - throughputActual[j]));
+			   } else {
+				   MAPE = Math.abs((throughputIdeal[j] - throughputActual[j]) / 
+						   (throughputIdeal[j]+ throughputActual[j]));
+			   }
+			  total += MAPE;
+			  ampes.add(MAPE);  
+		}
+		
+		Collections.sort(ampes);
+		System.out.print("ANN Average " + total/ampes.size()+ "\n");
+		System.out.print("ANN Median " + ampes.get(ampes.size()/2) + "\n");
+		System.out.print("ANN 90th " + ampes.get((int)(ampes.size() * 0.9)) + "\n");
+		
+		
+		MAPE = 0.0;
+		total = 0.0;
+		ampes = new ArrayList<Double>();
+		for (int j = 0; j < throughputIdeal.length; j++) {
+			MAPE = 0.0;
+			  if ((tThroughputActual[j] > 0 && throughputIdeal[j] < 0) ||
+					   (tThroughputActual[j] < 0 && throughputIdeal[j] > 0)) {
+				   MAPE = Math.abs((throughputIdeal[j] + tThroughputActual[j]) / 
+						   (throughputIdeal[j] - tThroughputActual[j]));
+			   } else {
+				   MAPE = Math.abs((throughputIdeal[j] - tThroughputActual[j]) / 
+						   (throughputIdeal[j]+ tThroughputActual[j]));
+			   }
+			  total += MAPE;
+			  ampes.add(MAPE);  
+		}
+		
+		System.out.print("Conversional ANN Average " + total/ampes.size()+ "\n");
+		System.out.print("Conversional ANN Median " + ampes.get(ampes.size()/2) + "\n");
+		System.out.print("Conversional ANN 90th " + ampes.get((int)(ampes.size() * 0.9)) + "\n");
+	}
+	
+	private void createResponsetData (XYSeries series1, XYSeries series2,
+			XYSeries series3){
+		int i = 1;
+		for (double d : responseIdeal) {
+			series1.add(i, maxOfResponse*d*1000);
+			i++;
+		}
+		i=1;
+		for (double d : responseActual) {
+			series2.add(i, maxOfResponse*d*1000);
+			i++;
+		}
+		
+		i=1;
+		for (double d : tResponseActual) {
+			series3.add(i, maxOfResponse*d*1000);
+			i++;
+		}
+		
+		double MAPE = 0.0;
+		double total = 0.0;
+		List<Double> ampes = new ArrayList<Double>();
+		for (int j = 0; j < responseIdeal.length; j++) {
+			MAPE = 0.0;
+			  if ((responseActual[j] > 0 && responseIdeal[j] < 0) ||
+					   (responseActual[j] < 0 && responseIdeal[j] > 0)) {
+				   MAPE = Math.abs((responseIdeal[j] + responseActual[j]) / 
+						   (responseIdeal[j] - responseActual[j]));
+			   } else {
+				   MAPE = Math.abs((responseIdeal[j] - responseActual[j]) / 
+						   (responseIdeal[j]+ responseActual[j]));
+			   }
+			  total += MAPE;
+			  ampes.add(MAPE);  
+		}
+		
+		Collections.sort(ampes);
+		System.out.print("ANN Average " + total/ampes.size()+ "\n");
+		System.out.print("ANN Median " + ampes.get(ampes.size()/2) + "\n");
+		System.out.print("ANN 90th " + ampes.get((int)(ampes.size() * 0.9)) + "\n");
+		MAPE = 0.0;
+		total = 0.0;
+		ampes = new ArrayList<Double>();
+		for (int j = 0; j < responseIdeal.length; j++) {
+			MAPE = 0.0;
+			  if ((tResponseActual[j] > 0 && responseIdeal[j] < 0) ||
+					   (tResponseActual[j] < 0 && responseIdeal[j] > 0)) {
+				   MAPE = Math.abs((responseIdeal[j] + tResponseActual[j]) / 
+						   (responseIdeal[j] - tResponseActual[j]));
+			   } else {
+				   MAPE = Math.abs((responseIdeal[j] - tResponseActual[j]) / 
+						   (responseIdeal[j]+ tResponseActual[j]));
+			   }
+			  total += MAPE;
+			  ampes.add(MAPE);  
+		}
+		
+		System.out.print("Conversional ANN Average " + total/ampes.size()+ "\n");
+		System.out.print("Conversional ANN Median " + ampes.get(ampes.size()/2) + "\n");
+		System.out.print("Conversional ANN 90th " + ampes.get((int)(ampes.size() * 0.9)) + "\n");
+		
+	}
+	
+	private void createAvailabilityData (XYSeries series1, XYSeries series2,
+			XYSeries series3){
+		int i = 1;
+		for (double d : avIdeal) {
+			series1.add(i, maxOfAv*d);
+			i++;
+		}
+		i=1;
+		for (double d : avActual) {
+			series2.add(i, maxOfAv*d);
+			i++;
+		}
+		i=1;
+		for (double d : tAvActual) {
+			series3.add(i, maxOfAv*d);
+			i++;
+		}
+		
+		
+		double MAPE = 0.0;
+		double total = 0.0;
+		List<Double> ampes = new ArrayList<Double>();
+		for (int j = 0; j < avIdeal.length; j++) {
+			MAPE = 0.0;
+			  if ((avActual[j] > 0 && avIdeal[j] < 0) ||
+					   (avActual[j] < 0 && avIdeal[j] > 0)) {
+				   MAPE = Math.abs((avIdeal[j] + avActual[j]) / 
+						   (avIdeal[j] - avActual[j]));
+			   } else {
+				   MAPE = Math.abs((avIdeal[j] - avActual[j]) / 
+						   (avIdeal[j]+ avActual[j]));
+			   }
+			  total += MAPE;
+			  ampes.add(MAPE);  
+		}
+		
+		Collections.sort(ampes);
+		System.out.print("Average " + total/ampes.size()+ "\n");
+		System.out.print("Median " + ampes.get(ampes.size()/2) + "\n");
+		System.out.print("90th " + ampes.get((int)(ampes.size() * 0.9)) + "\n");
+	}
+
+	/**
+	 * Creates a sample chart.
+	 * 
+	 * @param dataset
+	 *            a dataset.
+	 * 
+	 * @return The chart.
+	 */
+	private JFreeChart createChart(final XYDataset dataset) {
+
+		
+		// create the chart...
+		final JFreeChart chart = ChartFactory.createXYLineChart(
+				title, // chart title
+				"Interval", // domain
+																	// axis
+																	// label
+				"Mean Resp Time (s)",//"Average time (ms) taken for each service to complete", // range
+																		// axis
+																		// label
+				dataset, // data
+				PlotOrientation.VERTICAL, // orientation
+				true, // include legend
+				true, // tooltips
+				false // urls
+				);
+	    /*Shape[] arrayOfShape = new Shape[4];
+	    int[] arrayOfInt1 = { -3, 3, -3 };
+	    int[] arrayOfInt2 = { -3, 0, 3 };
+	    arrayOfShape[0] = new Polygon(arrayOfInt1, arrayOfInt2, 3);
+	    arrayOfShape[1] = new Rectangle2D.Double(-2.0D, -3.0D, 3.0D, 8.0D);
+	    arrayOfInt1 = new int[] { -3, 3, 3 };
+	    arrayOfInt2 = new int[] { 0, -3, 3 };
+	    arrayOfShape[2] = new Polygon(arrayOfInt1, arrayOfInt2, 3);
+	    arrayOfShape[3] = new Rectangle2D.Double(-6.0D, -6.0D, 6.0D, 6.0D);
+	    DefaultDrawingSupplier localDefaultDrawingSupplier = new DefaultDrawingSupplier(DefaultDrawingSupplier.DEFAULT_PAINT_SEQUENCE, DefaultDrawingSupplier.DEFAULT_OUTLINE_PAINT_SEQUENCE, DefaultDrawingSupplier.DEFAULT_STROKE_SEQUENCE, DefaultDrawingSupplier.DEFAULT_OUTLINE_STROKE_SEQUENCE, arrayOfShape);
+	  */
+
+
+		// NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
+		// final StandardLegend legend = (StandardLegend) chart.getLegend();
+		// legend.setDisplaySeriesShapes(true);
+		// legend.setShapeScaleX(1.5);
+		// legend.setShapeScaleY(1.5);
+		// legend.setDisplaySeriesLines(true);
+
+		chart.setBackgroundPaint(Color.white);
+
+		final XYPlot plot = (XYPlot) chart.getPlot();
+		plot.setBackgroundPaint(Color.white);
+		plot.setRangeGridlinePaint(Color.black);
+		XYLineAndShapeRenderer localLineAndShapeRenderer = (XYLineAndShapeRenderer)plot.getRenderer();
+	    localLineAndShapeRenderer.setBaseShapesVisible(true);
+	    //localLineAndShapeRenderer.setBaseItemLabelsVisible(true);
+	    localLineAndShapeRenderer.setBaseItemLabelGenerator(new StandardXYItemLabelGenerator());
+		// customise the range axis...
+	    ValueAxis domain = (ValueAxis) plot.getDomainAxis();
+	
+		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+		//rangeAxis.setTickUnit(new NumberTickUnit(20));
+		rangeAxis.setAutoRangeIncludesZero(true);
+
+		// ****************************************************************************
+		// * JFREECHART DEVELOPER GUIDE *
+		// * The JFreeChart Developer Guide, written by David Gilbert, is
+		// available *
+		// * to purchase from Object Refinery Limited: *
+		// * *
+		// * http://www.object-refinery.com/jfreechart/guide.html *
+		// * *
+		// * Sales are used to provide funding for the JFreeChart project -
+		// please *
+		// * support us so that we can continue developing free software. *
+		// ****************************************************************************
+
+		// customise the renderer...
+		final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot
+				.getRenderer();
+		// renderer.setDrawShapes(true);
+		renderer.setSeriesPaint(0, Color.red);
+		renderer.setSeriesPaint(1, Color.blue);
+		//renderer.setSeriesPaint(2, Color.orange);
+		renderer.setSeriesPaint(2, Color.magenta);
+		renderer.setSeriesPaint(3, Color.green);
+		renderer.setSeriesPaint(4, Color.orange);
+		renderer.setSeriesStroke(0, new BasicStroke(2.0f,
+				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
+				new float[] { 1.0f, 1.0f }, 10.0f));
+		renderer.setSeriesStroke(2, new BasicStroke(2.0f,
+				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
+				new float[] { 1.0f, 1.0f }, 10.0f));
+		renderer.setSeriesStroke(1, new BasicStroke(2.0f,
+				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
+				new float[] { 1.0f, 1.0f }, 10.0f));
+		renderer.setSeriesStroke(3, new BasicStroke(2.0f,
+				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
+				new float[] { 1.0f, 1.0f }, 10.0f));
+		renderer.setSeriesStroke(4, new BasicStroke(2.0f,
+				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
+				new float[] { 1.0f, 1.0f }, 10.0f));
+		//renderer.setSeriesShape(0, new Ellipse2D.Double(-3, -3, 6, 6));
+		renderer.setSeriesShape(1, new Ellipse2D.Double(-3, -3, 6, 6));
+		renderer.setSeriesShapesFilled(0, false);
+		renderer.setSeriesShapesFilled(1, false);
+		renderer.setSeriesShapesFilled(2, false);
+		// OPTIONAL CUSTOMISATION COMPLETED.
+
+		return chart;
+	}
+
+	private static class Record {
+		private String name;
+		private double timeUsage;
+		private String numberOfThread;
+
+		public Record(String name, double timeUsage, String numberOfThread) {
+			super();
+			this.name = name;
+			this.timeUsage = timeUsage;
+			this.numberOfThread = numberOfThread;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public double getTimeUsage() {
+			return timeUsage;
+		}
+
+		public String getNumberOfThread() {
+			return numberOfThread;
+		}
+	}
+
+	/**
+	 * Starting point for the demonstration application.
+	 * 
+	 * @param args
+	 *            ignored.
+	 */
+	public static void main(final String[] args) {
+
+		final AbsoluteAccurcyChart demo = new AbsoluteAccurcyChart(title);
+		demo.pack();
+		RefineryUtilities.centerFrameOnScreen(demo);
+		demo.setVisible(true);
+
+	}
+
+	public synchronized static boolean record(String name, double timeUsage,
+			String numberOfThread) {
+
+		recoder.add(new Record(name, timeUsage, String.valueOf(Integer.parseInt(numberOfThread) * division)));
+		numberOfCompletedNode++;
+		if (numberOfCompletedNode % division == 0) {
+			currentRound++;
+			if (currentRound == numberOfRound) {
+				main(null);
+				return false;
+			} else {
+				executable = true;
+				synchronized (mutualLock) {
+					mutualLock.notifyAll();
+				}
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+}
+
