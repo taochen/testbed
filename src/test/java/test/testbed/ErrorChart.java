@@ -4,6 +4,7 @@ package test.testbed;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GradientPaint;
 import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
@@ -20,6 +21,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.ValueAxis;
@@ -30,6 +32,7 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
@@ -58,226 +61,6 @@ public class ErrorChart extends ApplicationFrame {
 	public static final Object mutualLock = new Byte[0];
 	
 	private static final String title = "";//"Performance comparison";
-	
-	private static final double[] throughputIdeal = {
-		0.4515516942474389,
-		0.43500267927501973,
-		0.38888888888888895,
-		0.4822855791962175,
-		0.5106382978723405,
-		0.39835843183609143,
-		0.4515516942474389,
-		0.46453900709219864,
-		0.4633569739952719,
-		0.32269503546099293,
-		0.14184869976359338,
-		0.04255319148936171,
-		0.00236414499605989,
-		0.08510638297872342,
-		0.14539007092198583,
-		0.1914957446808511,
-		0.20095232466509064,
-		0.21040189125295508,
-		0.2293144208037825,
-		0.22222962962962964,
-		0.2529550827423168,
-		0.23405035460992907,
-		0.21278014231680065,
-		0.23877068557919623,
-		0.2376044922537607,
-		0.0933806146572104,
-		0.04964869987392015,
-		0.19385988967691098,
-		0.37234042553191493,
-		0.5614844365642239,
-		0.6855791962174941,
-		0.693853427895981,
-		0.7104255713159969,
-		0.6832379038613081,
-		0.6501398739164697,
-		0.6513219464144997,
-		0.6796916863672183,
-		0.6725768321513003,
-		0.6855791962174941,
-		0.3557919621749409,
-		0.2186761229314421,
-		0.004728447607040015,
-		0.10520094562647754,
-		0.2505993695823483,
-		0.38888888888888895,
-		0.4326529560441613,
-		0.4113475177304965,
-		0.38300425617024114,
-		0.4479905437352246,
-		0.5094732466509063,
-		0.4113475177304965,
-		0.47164692671394803,
-		0.42907801418439717,
-		0.4550827423167849,
-		0.2210475571315997,
-		0.13474728162330551,
-		0.00945657998423956,
-		0.0059101654846335705,
-		0.09929408983451536,
-		0.12766382978723406,
-		0.2080447596532703,
-		0.21276595744680854,
-		0.24350693459416864,
-		0.2588738770685579,
-		0.2505993695823483,
-		0.22222962962962964,
-		0.23049645390070922,
-		0.23286828211189914,
-		0.21513002364066194,
-		0.2021411352009606,
-		0.08392434988179669,
-		0.04018912529550828,
-		0.18322123719464148,
-		0.39952718676122934,
-		0.5756693065405832,
-		0.6725992513790386,
-		0.6820558313632783,
-		0.706879353821907,
-		0.6725768321513003,
-		0.622952206461781,
-		0.6288625689519307,
-		0.7009689913317573,
-		0.6666666666666667,
-		0.621770133963751,
-		0.3333444444444445,
-		0.22459377462568952,
-		0.13712498060416042,
-		0.5189298266351458,
-		0.6844199763593382,
-		0.7718676122931443,
-		0.815630023640662,
-		0.8002630811662726,
-		0.624134278959811,
-		0.7919621749408985,
-		0.7943791979827224,
-		0.8096926713947991,
-		0.6087876294064019,
-		0.8912826635145784,
-		0.5035460992907802,
-		0.2505993695823483,
-		0.04964704491725768,
-		0.05437352245862885,
-		0.1749408983451537,
-		0.28250591016548465,
-		0.2943360520094563,
-		0.2967001970055162,
-		0.3132492119779354,
-		0.2895981087470449,
-		0.3534396769109535,
-		0.34989345941686373,
-		0.36404192520070294,
-		0.3239202564858535,
-		0.31678486997635935,
-		0.1761288022064618,
-		0.12056737588652483,
-		0.02245937746256895,
-		0.008274783312320025,
-		0.23049645390070922,
-		0.3605200945626478,
-		0.5851258865248228,
-		0.5898541765169425,
-		0.5732860520094563,
-		0.5508457840819543,
-		0.5898541765169425,
-		0.6146572104018913,
-		0.622952206461781,
-		0.5260047281323877,
-		0.5189298266351458,
-		0.5744872340425532,
-		0.20449172576832153,
-		0.16312056737588654,
-		0.00709243498817967,
-		0.12174940898345155,
-		0.15721564223798268,
-		0.23401915205632157,
-		0.21517305681758625,
-		0.2529635145784082,
-		0.23641449960598898,
-		0.24114278959810875,
-		0.24703668297606007,
-		0.22460126133440067,
-		0.2115839243498818,
-		0.24941729708431837,
-		0.20567375886524825,
-		0.08156300236406619,
-		0.06264984239558707,
-		0.13239211977935383,
-		0.4231678486997636,
-		0.5969665103888018,
-		0.8014451536643027,
-		0.7659829787234044,
-		0.7612293144208039,
-		0.4905600866824272,
-		0.8132387706855793,
-		0.5496453900709221,
-		0.7624113475177305,
-		0.6761454688731284,
-		0.7045152088258472,
-		0.5401891252955083,
-		0.2517814420803782,
-		0.06501182033096928,
-		0.06264775413711585,
-		0.11465721040189125,
-		0.20567375886524825,
-		0.2080447596532703,
-		0.18085106382978725,
-		0.1997436196844361,
-		0.20924078153673603,
-		0.2186761229314421,
-		0.2434988179669031,
-		0.23996071710007882,
-		0.22577584712371945,
-		0.2293144208037825,
-		0.13239211977935383,
-		0.06855791962174941,
-		0.011820330969267141,
-		0.050827423167848704,
-		0.37708112687155243,
-		0.5815602836879433,
-		0.8428457859548826,
-		0.7151538613081168,
-		0.7978989361702128,
-		0.6004728132387708,
-		0.5851063829787235,
-		0.8321513002364067,
-		0.8085375886524824,
-		0.6867612293144209,
-		0.537842986603625,
-		0.664324743892829,
-		0.3037926319936958,
-		0.132387706855792,
-		0.010638297872340427,
-		0.10638297872340427,
-		0.17375886524822695,
-		0.23404255319148937,
-		0.23167848699763596,
-		0.23995271867612294,
-		0.21513002364066194,
-		0.22104018912529552,
-		0.21394799054373523,
-		0.21986548463356975,
-		0.23050413711583925,
-		0.25650118203309696,
-		0.21513002364066194,
-		0.06264775413711585,
-		0.04137391656160013,
-		0.00236390860519937,
-		0.30734909445760095,
-		0.5721230890464933,
-		0.7966903073286052,
-		0.7115839243498818,
-		0.41610338941952124,
-		0.5839438140267927,
-		0.48463356973995275,
-		1.0,
-		0.7908065011820332
-	
-	};
 	
 	
 	private static final double[] armaThroughputActual = {
@@ -370,7 +153,7 @@ Prediction RS: 0.9999996056410796
 	 */
 	public ErrorChart(final String title) {
 		super(title);
-		final XYDataset dataset = createDataset();
+		final CategoryDataset dataset = createDataset();
 		final JFreeChart chart = createChart(dataset);
 		final ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new Dimension(900, 570));
@@ -382,39 +165,68 @@ Prediction RS: 0.9999996056410796
 	 * 
 	 * @return The dataset.
 	 */
-	private XYDataset createDataset() {
+	private CategoryDataset createDataset() {
 
 
-		// create the dataset...
-		XYSeries series1 = new XYSeries("ANN Response Time Error");
-		XYSeries series2 = new XYSeries("ARMIA Response Time Error");
-		XYSeries series3 = new XYSeries("ANN Throughput Error");
-		XYSeries series4 = new XYSeries("ARMIA Throughput Error");
-		XYSeries series5 = new XYSeries("ANN Availability Error");
-		XYSeries series6 = new XYSeries("ARMIA Availability Error");
-		
+		   // row keys...
+        final String series1 = "ANN-R";
+        final String series2 = "ARMAX-R";
+        final String series3 = "ANN-T";
+        final String series4 = "ARMAX-T";
+        final String series5 = "ANN-A";
+        final String series6 = "ARMAX-A";
+      
 
-		XYSeriesCollection xyDataset = new XYSeriesCollection();
-		xyDataset.addSeries(series1);
-		xyDataset.addSeries(series2);
-		xyDataset.addSeries(series3);
-		xyDataset.addSeries(series4);
-		xyDataset.addSeries(series5);
-		xyDataset.addSeries(series6);
-		//createThroughputData(series1, series2);
-		//createResponsetData(series1, series2);
-		//createAvailabilityData(series1, series2);
-		this.createData(series1, series2, series3, series4, series5, series6);
-		return xyDataset;
+        // column keys...
+        /*final String category1 = "Response Time";
+        final String category2 = "Throughput";
+        final String category3 = "Availability";*/
+        
+        
+        final String category1 = "40%";
+        final String category2 = "60%";
+        final String category3 = "80%";
+        
+        final String category4 = "100%";
+        // create the dataset...
+        final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        
+        dataset.addValue(responseActual[0]*100, series1, category1);
+        dataset.addValue(armaResponseActual[0]*100, series2, category1);
+        dataset.addValue(throughputActual[0]*100, series3, category1);
+        dataset.addValue(armaThroughputActual[0]*100, series4, category1);
+        dataset.addValue(avActual[0]*100, series5, category1);
+        dataset.addValue(armaAvActual[0]*100, series6, category1);
+        
+        dataset.addValue(responseActual[1]*100, series1, category2);
+        dataset.addValue(armaResponseActual[1]*100, series2, category2);
+        dataset.addValue(throughputActual[1]*100, series3, category2);
+        dataset.addValue(armaThroughputActual[1]*100, series4, category2);
+        dataset.addValue(avActual[1]*100, series5, category2);
+        dataset.addValue(armaAvActual[1]*100, series6, category2);
+        
+        dataset.addValue(responseActual[2]*100, series1, category3);
+        dataset.addValue(armaResponseActual[2]*100, series2, category3);
+        dataset.addValue(throughputActual[2]*100, series3, category3);
+        dataset.addValue(armaThroughputActual[2]*100, series4, category3);
+        dataset.addValue(avActual[2]*100, series5, category3);
+        dataset.addValue(armaAvActual[2]*100, series6, category3);
+        
+        dataset.addValue(responseActual[3]*100, series1, category4);
+        dataset.addValue(armaResponseActual[3]*100, series2, category4);
+        dataset.addValue(throughputActual[3]*100, series3, category4);
+        dataset.addValue(armaThroughputActual[3]*100, series4, category4);
+        dataset.addValue(avActual[3]*100, series5, category4);
+        dataset.addValue(armaAvActual[3]*100, series6, category4);
+	
+		return dataset;
 
 	}
 	
 	private void createThroughputData (XYSeries series1, XYSeries series2){
 		int i = 1;
-		for (double d : throughputIdeal) {
-			series1.add(i, maxOfThroughput*d);
-			i++;
-		}
+		
 		i=1;
 		for (double d : throughputActual) {
 			series2.add(i, maxOfThroughput*d);;
@@ -510,109 +322,81 @@ Prediction RS: 0.9999996056410796
 	 * 
 	 * @return The chart.
 	 */
-	private JFreeChart createChart(final XYDataset dataset) {
+    private JFreeChart createChart(final CategoryDataset dataset) {
+        
+        // create the chart...
+        final JFreeChart chart = ChartFactory.createBarChart(
+            "",         // chart title
+            "Model and QoS",               // domain axis label
+            "Error (%)",                  // range axis label
+            dataset,                  // data
+            PlotOrientation.VERTICAL, // orientation
+            true,                     // include legend
+            true,                     // tooltips?
+            false                     // URLs?
+        );
 
-		
-		// create the chart...
-		final JFreeChart chart = ChartFactory.createXYLineChart(
-				title, // chart title
-				"Interval", // domain
-																	// axis
-																	// label
-				"Mean Resp Time (s)",//"Average time (ms) taken for each service to complete", // range
-																		// axis
-																		// label
-				dataset, // data
-				PlotOrientation.VERTICAL, // orientation
-				true, // include legend
-				true, // tooltips
-				false // urls
-				);
-	    /*Shape[] arrayOfShape = new Shape[4];
-	    int[] arrayOfInt1 = { -3, 3, -3 };
-	    int[] arrayOfInt2 = { -3, 0, 3 };
-	    arrayOfShape[0] = new Polygon(arrayOfInt1, arrayOfInt2, 3);
-	    arrayOfShape[1] = new Rectangle2D.Double(-2.0D, -3.0D, 3.0D, 8.0D);
-	    arrayOfInt1 = new int[] { -3, 3, 3 };
-	    arrayOfInt2 = new int[] { 0, -3, 3 };
-	    arrayOfShape[2] = new Polygon(arrayOfInt1, arrayOfInt2, 3);
-	    arrayOfShape[3] = new Rectangle2D.Double(-6.0D, -6.0D, 6.0D, 6.0D);
-	    DefaultDrawingSupplier localDefaultDrawingSupplier = new DefaultDrawingSupplier(DefaultDrawingSupplier.DEFAULT_PAINT_SEQUENCE, DefaultDrawingSupplier.DEFAULT_OUTLINE_PAINT_SEQUENCE, DefaultDrawingSupplier.DEFAULT_STROKE_SEQUENCE, DefaultDrawingSupplier.DEFAULT_OUTLINE_STROKE_SEQUENCE, arrayOfShape);
-	  */
+        // NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
+
+        // set the background color for the chart...
+        chart.setBackgroundPaint(Color.white);
+
+        // get a reference to the plot for further customisation...
+        final CategoryPlot plot = chart.getCategoryPlot();
+        plot.setBackgroundPaint(Color.white);
+        //plot.setDomainGridlinePaint(Color.white);
+        //plot.setRangeGridlinePaint(Color.white);
+
+        // set the range axis to display integers only...
+        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+        // disable bar outlines...
+        final BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setDrawBarOutline(false);
+        
+        // set up gradient paints for series...
+        final GradientPaint gp0 = new GradientPaint(
+            0.0f, 0.0f, Color.blue, 
+            0.0f, 0.0f, Color.blue
+        );
+        
+        
+        final GradientPaint gp1 = new GradientPaint(
+            0.0f, 0.0f, Color.green, 
+            0.0f, 0.0f, Color.green
+        );
+        final GradientPaint gp2 = new GradientPaint(
+            0.0f, 0.0f, Color.red, 
+            0.0f, 0.0f, Color.red
+        );
+        
+        final GradientPaint gp3 = new GradientPaint(
+                0.0f, 0.0f, Color.cyan, 
+                0.0f, 0.0f, Color.cyan
+            );
+        
+        final GradientPaint gp4 = new GradientPaint(
+                0.0f, 0.0f, Color.orange, 
+                0.0f, 0.0f, Color.orange
+            );
+        renderer.setSeriesPaint(0, gp0);
+        renderer.setSeriesPaint(1, gp1);
+        renderer.setSeriesPaint(2, gp2);
+        renderer.setSeriesPaint(3, gp3);
+
+        renderer.setSeriesPaint(4, gp4);
 
 
-		// NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
-		// final StandardLegend legend = (StandardLegend) chart.getLegend();
-		// legend.setDisplaySeriesShapes(true);
-		// legend.setShapeScaleX(1.5);
-		// legend.setShapeScaleY(1.5);
-		// legend.setDisplaySeriesLines(true);
-
-		chart.setBackgroundPaint(Color.white);
-
-		final XYPlot plot = (XYPlot) chart.getPlot();
-		plot.setBackgroundPaint(Color.white);
-		plot.setRangeGridlinePaint(Color.black);
-		XYLineAndShapeRenderer localLineAndShapeRenderer = (XYLineAndShapeRenderer)plot.getRenderer();
-	    localLineAndShapeRenderer.setBaseShapesVisible(true);
-	    //localLineAndShapeRenderer.setBaseItemLabelsVisible(true);
-	    localLineAndShapeRenderer.setBaseItemLabelGenerator(new StandardXYItemLabelGenerator());
-		// customise the range axis...
-	    ValueAxis domain = (ValueAxis) plot.getDomainAxis();
-	 
-		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-		//rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-		rangeAxis.setTickUnit(new NumberTickUnit(0.1));
-		rangeAxis.setAutoRangeIncludesZero(true);
-
-		// ****************************************************************************
-		// * JFREECHART DEVELOPER GUIDE *
-		// * The JFreeChart Developer Guide, written by David Gilbert, is
-		// available *
-		// * to purchase from Object Refinery Limited: *
-		// * *
-		// * http://www.object-refinery.com/jfreechart/guide.html *
-		// * *
-		// * Sales are used to provide funding for the JFreeChart project -
-		// please *
-		// * support us so that we can continue developing free software. *
-		// ****************************************************************************
-
-		// customise the renderer...
-		final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot
-				.getRenderer();
-		
-		renderer.setSeriesPaint(0, Color.red);
-		renderer.setSeriesPaint(1, Color.blue);
-		//renderer.setSeriesPaint(2, Color.orange);
-		renderer.setSeriesPaint(2, Color.magenta);
-		renderer.setSeriesPaint(3, Color.green);
-		renderer.setSeriesPaint(4, Color.orange);
-		/*renderer.setSeriesStroke(0, new BasicStroke(2.0f,
-				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
-				new float[] { 1.0f, 1.0f }, 10.0f));
-		renderer.setSeriesStroke(2, new BasicStroke(2.0f,
-				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
-				new float[] { 1.0f, 1.0f }, 10.0f));
-		renderer.setSeriesStroke(1, new BasicStroke(2.0f,
-				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
-				new float[] { 1.0f, 1.0f }, 10.0f));
-		renderer.setSeriesStroke(3, new BasicStroke(2.0f,
-				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
-				new float[] { 1.0f, 1.0f }, 10.0f));
-		renderer.setSeriesStroke(4, new BasicStroke(2.0f,
-				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
-				new float[] { 1.0f, 1.0f }, 10.0f));
-		//renderer.setSeriesShape(1, new Ellipse2D.Double(-3, -3, 6, 6));*/
-		renderer.setSeriesShape(1, null);
-		renderer.setSeriesShapesFilled(0, false);
-		renderer.setSeriesShapesFilled(1, false);
-		renderer.setSeriesShapesFilled(2, false);
-		
-		// OPTIONAL CUSTOMISATION COMPLETED.
-
-		return chart;
-	}
+        final CategoryAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setCategoryLabelPositions(
+            CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 6.0)
+        );
+        // OPTIONAL CUSTOMISATION COMPLETED.
+        
+        return chart;
+        
+    }
 
 	private static class Record {
 		private String name;
