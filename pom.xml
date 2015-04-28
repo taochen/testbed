@@ -12,6 +12,10 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+   
+  <!-- Define the version that we want to use here, so
+       we have a single line to change when upgrating. -->
+  <geotk.version>3.20-geoapi-3.0</geotk.version>
   </properties>
 
   <dependencies>
@@ -32,7 +36,12 @@
         <artifactId>javaee-api</artifactId>
         <version>6.0</version>
     </dependency>
-		
+		    <dependency>
+	         <groupId>org.apache.commons</groupId>
+	         <artifactId>commons-math3</artifactId>
+	         <version>3.0</version>
+	         <scope>compile</scope>
+        </dependency>
 <dependency>
       <groupId>commons-pool</groupId>
       <artifactId>commons-pool</artifactId>
@@ -63,5 +72,17 @@
              <version>3.1.0</version>
             <scope>compile</scope>
         </dependency>
-  </dependencies>
+  
+  <dependency>
+    <groupId>org.geotoolkit</groupId>
+    <artifactId>geotk-referencing</artifactId>
+    <version>${geotk.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.geotoolkit</groupId>
+    <artifactId>geotk-logging-log4j</artifactId>
+    <version>${geotk.version}</version>
+    <scope>runtime</scope>
+  </dependency>
+</dependencies>
 </project>

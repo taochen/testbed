@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import com.testbed.*;
 
@@ -36,7 +37,7 @@ public class AppTest
     	
     }
     public static void main (String[] args) {
-    	List<Object> l = new LinkedList<Object>();
+    	/*List<Object> l = new LinkedList<Object>();
     	l.add(new Object());
     	l.add(new Object());
     	int j = 0;
@@ -45,7 +46,26 @@ public class AppTest
     			l.remove(i);
     		}
     		j++;
-    	}
+    	}*/
+    	
+    	 double[] FD = {
+    			 -1.117116070114196,
+    			 0.038085991776498435,
+    			 0.6679471501779903,
+    			 -0.8974461881743978,
+    			 -0.9684216190143575,
+    			 0.6787494714054682,
+    			 -0.21778245118243156,
+    			 -0.9238890891105063,
+    			 -0.8225544864468989,
+    			 0.43264923316339976,
+    			 -0.7734129483841399
+    			};
+    	 
+    	 Random r = new Random();
+    	 for (double d : FD) {
+    		 System.out.print((d-r.nextDouble()) + ",\n");
+    	 }
     }
     
     public static void main1 (String[] args) {

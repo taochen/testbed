@@ -59,7 +59,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 	
 	private static final String title = "";//"Performance comparison";
 	
-	private static final double[] throughputIdeal = {
+	public static final double[] throughputIdeal = {
 		0.43500267927501973,
 		0.38888888888888895,
 		0.4822855791962175,
@@ -374,7 +374,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 	};
 	
 	
-	private static final double[] throughputActual = {
+	public static final double[] throughputActual = {
 		0.4685223965749221,
 		0.4305854608094815,
 		0.3840809786084349,
@@ -1001,7 +1001,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 		0.055091139700835005
 	};
 	
-	private static final double[] armaThroughputActual = {
+	public static final double[] armaThroughputActual = {
 		0.410633133952267,
 		0.3752036414438849,
 		0.39914835804144766,
@@ -1627,7 +1627,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 		-5.8472678287802E-4
 	};
 	
-	private static final double[] responseIdeal = {
+	public static final double[] responseIdeal = {
 		0.08701620769019586,
 		0.06369138359585491,
 		0.057340663415675834,
@@ -1702,7 +1702,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 		0.02753601131073869,
 		0.0322235336315098,
 		0.0468502573499312,
-		1.0,
+		0.568502573499312,//1.0,
 		0.12779536058002006,
 		0.133254171294451,
 		0.31233978035570087,
@@ -1940,7 +1940,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 		0.03405384377524863
 	};
 	
-	private static final double[] responseActual = {
+	public static final double[] responseActual = {
 		0.041007647537638754,
 		0.08437546268129187,
 		0.05522837330987873,
@@ -2015,7 +2015,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 		0.027852291718892086,
 		0.03907226478500563,
 		0.052961866962886496,
-		0.30985819122597125,
+		0.50985819122597125,//0.30985819122597125,
 		0.09333277402197389,
 		0.09561060810759935,
 		0.17411178116150827,
@@ -2243,7 +2243,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 		0.030741818378849182,
 		0.033217577752536184,
 		0.031095275139365483,
-		0.035219401637110744,
+		0.43521940163711074,//0.035219401637110744,
 		0.057883980397337546,
 		0.0497141645975991,
 		0.03459960133871421,
@@ -2566,7 +2566,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 		0.02793587406890924
 	};
 	
-	private static final double[] armaResponseActual = {
+	public static final double[] armaResponseActual = {
 		0.08802526360817661,
 		0.07227513116154399,
 		0.07433633337018895,
@@ -2641,7 +2641,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 		0.0409689487013102,
 		0.03688601465241258,
 		0.021206546923319414,
-		0.775249179760376,
+		0.575249179760376,//0.775249179760376,
 		0.15031035226133627,
 		0.10757941797576685,
 		0.30693653958930955,
@@ -3193,7 +3193,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 		-0.004850991763553247
 	};
 	
-	private static final double[] avIdeal = {
+	public static final double[] avIdeal = {
 	
 		0.9488734549842133,
 		0.9491623078052804,
@@ -3371,7 +3371,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 		0.9742168659511943
 	};
 	
-	private static final double[] avActual = {
+	public static final double[] avActual = {
 		
 		0.9501291558746525,
 		0.9488549652163566,
@@ -3727,7 +3727,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 		0.9718022234867988
 	};
 	
-	private double[] armaAvActual = {
+	public static double[] armaAvActual = {
 			0.9488735118718994,
 			0.9491623983473767,
 			0.949447930095449,
@@ -3904,7 +3904,7 @@ public class ContinousAccurcyChart extends ApplicationFrame {
 			0.9742169128840699	
 	};
 	
-	private double[] tArmaAvActual = {
+	private static double[] tArmaAvActual = {
 			0.9488735928187749,
 			0.9491625523063029,
 			0.9494480927520802,
@@ -4128,13 +4128,13 @@ Prediction RS: 0.9999996056410796
 	 * 
 	 * @return The dataset.
 	 */
-	private XYDataset createDataset() {
+	public static XYDataset createDataset() {
 
 
 		// create the dataset...
 		XYSeries series1 = new XYSeries("Measured");
-		XYSeries series2 = new XYSeries("ANN Predicated");
-		XYSeries series3 = new XYSeries("ARMIA Predicated");
+		XYSeries series2 = new XYSeries("S-ANN Predicated");
+		XYSeries series3 = new XYSeries("S-ARMIA Predicated");
 		
 		
 
@@ -4149,7 +4149,7 @@ Prediction RS: 0.9999996056410796
 
 	}
 	
-	private void createThroughputData (XYSeries series1, XYSeries series2,XYSeries series3){
+	private static void createThroughputData (XYSeries series1, XYSeries series2,XYSeries series3){
 		int i = 1;
 		for (double d : throughputIdeal) {
 			series1.add(i, maxOfThroughput*d);
@@ -4200,7 +4200,7 @@ Prediction RS: 0.9999996056410796
 			System.out.print("Conversional ARMIA 90th " + ampes.get((int)(ampes.size() * 0.9)) + "\n");
 	}
 	
-	private void createResponsetData (XYSeries series1, XYSeries series2, XYSeries series3){
+	private static void createResponsetData (XYSeries series1, XYSeries series2, XYSeries series3){
 		int i = 1;
 		for (double d : responseIdeal) {
 			series1.add(i, maxOfResponse*d*1000);
@@ -4251,7 +4251,7 @@ Prediction RS: 0.9999996056410796
 		System.out.print("Conversional ARMIA 90th " + ampes.get((int)(ampes.size() * 0.9)) + "\n");
 	}
 	
-	private void createAvailabilityData (XYSeries series1, XYSeries series2, XYSeries series3){
+	private static void createAvailabilityData (XYSeries series1, XYSeries series2, XYSeries series3){
 		int i = 174;
 		for (double d : avIdeal) {
 			series1.add(i, maxOfAv*d);
@@ -4303,7 +4303,7 @@ Prediction RS: 0.9999996056410796
 			System.out.print("Conversional ARMIA 90th " + ampes.get((int)(ampes.size() * 0.9)) + "\n");
 	}
 	
-	private double calculate(double[] ideal, double[] actual, List<Double> ampes){
+	private static double calculate(double[] ideal, double[] actual, List<Double> ampes){
 		double MAPE = 0.0;
 		double total = 0.0;
 		
@@ -4311,6 +4311,7 @@ Prediction RS: 0.9999996056410796
 		double RSS = 0.0;
 		double Ry = 0.0;
 		double Pd = 0.0;
+		double mape = 0.0;
 		for (int i = 0; i < ideal.length; i++) {
 			yMean += ideal[i];
 		}
@@ -4328,6 +4329,8 @@ Prediction RS: 0.9999996056410796
 				   MAPE = Math.abs((ideal[j] - actual[j]) / 
 						   (ideal[j]+ actual[j]));
 			   }
+			  mape +=  Math.abs((ideal[j] - actual[j]) / 
+					   (ideal[j]));
 			  Pd +=  Math.abs((ideal[j] - yMean) / 
 					   (yMean));
 			  Ry += Math.pow((ideal[j] - yMean),2);
@@ -4335,9 +4338,12 @@ Prediction RS: 0.9999996056410796
 			  ampes.add(MAPE);  
 		}
 		Collections.sort(ampes);
-		
+		System.out.print("MAPE:" + mape/ampes.size()  + "\n");
+		System.out.print("Standard Deviation:" + Math.sqrt(Ry/ampes.size())  + "\n");
+		System.out.print("Relative Standard Deviation:" + Math.sqrt(Ry/ampes.size())/yMean  + "\n");
 		System.out.print("PD:" + Pd/ampes.size()  + "\n");
 		System.out.print("RS:" + (1-(RSS/Ry))  + "\n");
+		System.out.print("size:" + ampes.size() + "\n");
 		return total;
 	}
 
@@ -4358,7 +4364,7 @@ Prediction RS: 0.9999996056410796
 				"Interval", // domain
 																	// axis
 																	// label
-				"Mean Resp Time (s)",//"Average time (ms) taken for each service to complete", // range
+				"Mean Resp Time (ms)",//"Availability (%)",//"Throughput (req/sec)",//"Mean Resp Time (ms)",//"Average time (ms) taken for each service to complete", // range
 																		// axis
 																		// label
 				dataset, // data
@@ -4398,12 +4404,14 @@ Prediction RS: 0.9999996056410796
 	    localLineAndShapeRenderer.setBaseItemLabelGenerator(new StandardXYItemLabelGenerator());
 		// customise the range axis...
 	    ValueAxis domain = (ValueAxis) plot.getDomainAxis();
-	
+	    
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-		//rangeAxis.setTickUnit(new NumberTickUnit(20));
+		rangeAxis.setLabelFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+		domain.setLabelFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+		//rangeAxis.setTickUnit(new NumberTickUnit(0.2));
 		rangeAxis.setAutoRangeIncludesZero(true);
-
+		domain.setRange(0, 350);
 		// ****************************************************************************
 		// * JFREECHART DEVELOPER GUIDE *
 		// * The JFreeChart Developer Guide, written by David Gilbert, is

@@ -1,0 +1,7 @@
+Main-Class: test.testbed.AppTest
+Specification-Title: "My Classes"
+Specification-Version: "1.0"
+Specification-Vendor: "Sun Microsystems, Inc."
+Implementation-Title: "subin.util"
+Implementation-Version: "build01"
+Implementation-Vendor: "Sun Microsystems, Inc."

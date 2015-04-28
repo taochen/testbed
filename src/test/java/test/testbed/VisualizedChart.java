@@ -12,7 +12,9 @@ import java.util.List;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
@@ -74,38 +76,38 @@ public class VisualizedChart extends ApplicationFrame {
 		dataset.addValue(0, "S2", "1");
 		dataset.addValue(12.0, "SLA of S1", "1");
 		dataset.addValue(40.0, "SLA of S2", "1");
-		dataset.addValue(9.40, "web-service", "1");
+		dataset.addValue(9.40, "component", "1");
 		
 		dataset.addValue(14.22, "S1", "2");
 		dataset.addValue(47.85, "S2", "2");
 		dataset.addValue(12.0, "SLA of S1", "2");
 		dataset.addValue(40.0, "SLA of S2", "2");
-		dataset.addValue(24.31, "web-service", "2");
+		dataset.addValue(24.31, "component", "2");
 		
 		dataset.addValue(13.12, "S1", "3");
 		dataset.addValue(46.70, "S2", "3");
 		dataset.addValue(12.0, "SLA of S1", "3");
 		dataset.addValue(40.0, "SLA of S2", "3");
-		dataset.addValue(23.19, "web-service", "3");
+		dataset.addValue(23.19, "component", "3");
 		
 		dataset.addValue(12.58, "S1", "4");
 		dataset.addValue(41.42, "S2", "4");
 		dataset.addValue(12.0, "SLA of S1", "4");
 		dataset.addValue(40.0, "SLA of S2", "4");
-		dataset.addValue(21.23, "web-service", "4");
+		dataset.addValue(21.23, "component", "4");
 		
 		
 		dataset.addValue(9.13, "S1", "5");
 		dataset.addValue(37.42, "S2", "5");
 		dataset.addValue(12.0, "SLA of S1", "5");
 		dataset.addValue(40.0, "SLA of S2", "5");
-		dataset.addValue(17.61, "web-service", "5");
+		dataset.addValue(17.61, "component", "5");
 		
-		dataset.addValue(5.91, "S1", "6");
+		dataset.addValue(12.11, "S1", "6");
 		dataset.addValue(23.13, "S2", "6");
 		dataset.addValue(12.0, "SLA of S1", "6");
 		dataset.addValue(40.0, "SLA of S2", "6");
-		dataset.addValue(11.08, "web-service", "6");
+		dataset.addValue(11.08, "component", "6");
 		} else if (i==1) {
 		dataset.addValue(1, "cpu", "1");
 		dataset.addValue(1, "cpu", "2");
@@ -120,6 +122,22 @@ public class VisualizedChart extends ApplicationFrame {
 			dataset.addValue(512, "memory", "4");
 			dataset.addValue(2048, "memory", "5");
 			dataset.addValue(2048, "memory", "6");
+		}
+		
+		else if (i==3) {
+			dataset.addValue(7.5, "original", "512");
+			dataset.addValue(9.4, "original", "128");
+			dataset.addValue(6.8, "original", "2048");
+			dataset.addValue(8.1, "original", "256");
+			
+		
+			
+			dataset.addValue(6.9, "partitioned", "512");
+			dataset.addValue(7.6, "partitioned", "128");
+			dataset.addValue(6.6, "partitioned", "2048");
+			dataset.addValue(7.1, "partitioned", "256");
+			
+			
 		}
 		
 		return dataset;
@@ -139,7 +157,7 @@ public class VisualizedChart extends ApplicationFrame {
 		// create the chart...
 		final JFreeChart chart = ChartFactory.createLineChart(
 				title, // chart title
-				"Epoch", // domain
+				"Interval",//"Memory (MB)", // domain Interval
 																	// axis
 																	// label
 				"Mean Resp Time (s)",//"Average time (ms) taken for each service to complete", // range
@@ -184,6 +202,11 @@ public class VisualizedChart extends ApplicationFrame {
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		rangeAxis.setAutoRangeIncludesZero(true);
+		
+		CategoryAxis domain = (CategoryAxis) plot.getDomainAxis();
+		
+		rangeAxis.setLabelFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+		domain.setLabelFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
 
 		// ****************************************************************************
 		// * JFREECHART DEVELOPER GUIDE *

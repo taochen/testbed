@@ -10,8 +10,10 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -19,34 +21,46 @@ import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.CategoryAnnotation;
+import org.jfree.chart.annotations.CategoryTextAnnotation;
+import org.jfree.chart.annotations.XYTitleAnnotation;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardXYItemLabelGenerator;
 import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
+import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.Layer;
+import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RefineryUtilities;
+import org.jfree.ui.TextAnchor;
 
 public class ErrorChart extends ApplicationFrame {
 
 	static List<Record> recoder = new LinkedList<Record>();
-
+	public final JFreeChart chart;
 	// Corresponding to column number
 	public static int numberOfRound = 0;
 
@@ -154,9 +168,9 @@ Prediction RS: 0.9999996056410796
 	public ErrorChart(final String title) {
 		super(title);
 		final CategoryDataset dataset = createDataset();
-		final JFreeChart chart = createChart(dataset);
+		chart = createChart(dataset);
 		final ChartPanel chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new Dimension(900, 570));
+		chartPanel.setPreferredSize(new Dimension(380, 160));
 		setContentPane(chartPanel);
 	}
 
@@ -169,12 +183,12 @@ Prediction RS: 0.9999996056410796
 
 
 		   // row keys...
-        final String series1 = "ANN-R";
-        final String series2 = "ARMAX-R";
-        final String series3 = "ANN-T";
-        final String series4 = "ARMAX-T";
-        final String series5 = "ANN-A";
-        final String series6 = "ARMAX-A";
+        final String series1 = "S-ANN-R";
+        final String series2 = "S-ARMAX-R";
+        final String series3 = "S-ANN-T";
+        final String series4 = "S-ARMAX-T";
+        final String series5 = "S-ANN-A";
+        final String series6 = "S-ARMAX-A";
       
 
         // column keys...
@@ -327,8 +341,8 @@ Prediction RS: 0.9999996056410796
         // create the chart...
         final JFreeChart chart = ChartFactory.createBarChart(
             "",         // chart title
-            "Model and QoS",               // domain axis label
-            "Error (%)",                  // range axis label
+            "",               // domain axis label
+            "SMAPE (%)",                  // range axis label
             dataset,                  // data
             PlotOrientation.VERTICAL, // orientation
             true,                     // include legend
@@ -340,46 +354,71 @@ Prediction RS: 0.9999996056410796
 
         // set the background color for the chart...
         chart.setBackgroundPaint(Color.white);
-
+      
         // get a reference to the plot for further customisation...
         final CategoryPlot plot = chart.getCategoryPlot();
+       
+
+		LegendTitle lt = chart.getLegend();
+		// lt.setItemFont(new Font("Dialog", Font.PLAIN, 9));
+		//lt.setBackgroundPaint(new Color(200, 200, 255, 100));
+		lt.setFrame(new BlockBorder(Color.white));
+		lt.setPosition(RectangleEdge.RIGHT);
+		lt.setItemFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+
+		
         plot.setBackgroundPaint(Color.white);
         //plot.setDomainGridlinePaint(Color.white);
         //plot.setRangeGridlinePaint(Color.white);
+        ((BarRenderer) plot.getRenderer()).setBarPainter(new StandardBarPainter());
 
+        
+        final IntervalMarker target = new IntervalMarker(4.5, 18.5);
+      
+        target.setLabel("Target Range");
+        target.setLabelFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+        target.setLabelAnchor(RectangleAnchor.LEFT);
+        target.setLabelTextAnchor(TextAnchor.CENTER_LEFT);
+        target.setPaint(new Color(222, 222, 255, 128));
+       // plot.addRangeMarker(target, Layer.BACKGROUND);
+      
         // set the range axis to display integers only...
         final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
+        CategoryAxis domain = (CategoryAxis) plot.getDomainAxis();
+        rangeAxis.setTickUnit(new NumberTickUnit(10));
+    	rangeAxis.setLabelFont(new java.awt.Font("Dialog", java.awt.Font.BOLD, 12));
+		domain.setLabelFont(new java.awt.Font("Dialog", java.awt.Font.BOLD, 12));
+        
         // disable bar outlines...
         final BarRenderer renderer = (BarRenderer) plot.getRenderer();
         renderer.setDrawBarOutline(false);
-        
+        renderer.setShadowVisible(false);
         // set up gradient paints for series...
         final GradientPaint gp0 = new GradientPaint(
-            0.0f, 0.0f, Color.blue, 
-            0.0f, 0.0f, Color.blue
-        );
-        
-        
-        final GradientPaint gp1 = new GradientPaint(
-            0.0f, 0.0f, Color.green, 
-            0.0f, 0.0f, Color.green
-        );
-        final GradientPaint gp2 = new GradientPaint(
-            0.0f, 0.0f, Color.red, 
-            0.0f, 0.0f, Color.red
-        );
-        
-        final GradientPaint gp3 = new GradientPaint(
-                0.0f, 0.0f, Color.cyan, 
-                0.0f, 0.0f, Color.cyan
+                0.0f, 0.0f, Color.blue, 
+                0.0f, 0.0f, Color.blue
             );
-        
-        final GradientPaint gp4 = new GradientPaint(
-                0.0f, 0.0f, Color.orange, 
-                0.0f, 0.0f, Color.orange
+            
+            
+            final GradientPaint gp1 = new GradientPaint(
+                0.0f, 0.0f, Color.red, 
+                0.0f, 0.0f, Color.red
             );
+            final GradientPaint gp2 = new GradientPaint(
+                0.0f, 0.0f, Color.magenta, 
+                0.0f, 0.0f, Color.magenta
+            );
+            
+            final GradientPaint gp3 = new GradientPaint(
+                    0.0f, 0.0f, Color.orange, 
+                    0.0f, 0.0f, Color.orange
+                );
+            
+            final GradientPaint gp4 = new GradientPaint(
+                    0.0f, 0.0f, Color.cyan, 
+                    0.0f, 0.0f, Color.cyan
+                );
         renderer.setSeriesPaint(0, gp0);
         renderer.setSeriesPaint(1, gp1);
         renderer.setSeriesPaint(2, gp2);
@@ -435,7 +474,21 @@ Prediction RS: 0.9999996056410796
 		demo.pack();
 		RefineryUtilities.centerFrameOnScreen(demo);
 		demo.setVisible(true);
-
+		
+		try {
+			Thread.sleep((long)2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		File file = new File("/Users/tao/research/chart.png");
+		try {
+			ChartUtilities.saveChartAsPNG(file, demo.chart, 380, 170);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	
